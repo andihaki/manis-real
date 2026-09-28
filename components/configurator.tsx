@@ -3,6 +3,7 @@
 import { useWorkspace } from "@/hooks/use-workspace";
 import { countItems } from "@/lib/pricing";
 import { ProductSelector } from "./product-selector";
+import { PriceBar } from "./price-bar";
 import { RentDialog } from "./rent-dialog";
 import { WorkspaceScene } from "./workspace-scene";
 import { WorkspaceSummary } from "./workspace-summary";
@@ -27,7 +28,7 @@ export function Configurator() {
   const items = countItems(state.workspace);
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:py-10">
+    <div className="mx-auto w-full max-w-6xl px-4 pt-6 pb-32 sm:px-6 lg:pt-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-clay">
@@ -74,7 +75,6 @@ export function Configurator() {
             state={state}
             onSetTerm={setTerm}
             onSetCoupon={setCoupon}
-            onRent={beginRent}
           />
         </div>
       </div>
@@ -85,6 +85,7 @@ export function Configurator() {
         onConfirm={confirmRent}
         onEdit={cancelRent}
       />
+      <PriceBar state={state} onRent={beginRent} />
     </div>
   );
 }

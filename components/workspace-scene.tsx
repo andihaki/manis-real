@@ -38,7 +38,7 @@ export function WorkspaceScene({ workspace }: { workspace: Workspace }) {
     !workspace.plant;
 
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl ring-1 ring-black/5 shadow-sm">
+    <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl ring-1 ring-black/5 shadow-sm">
       <RoomBackdrop />
 
       {workspace.plant && (

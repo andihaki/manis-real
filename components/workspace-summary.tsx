@@ -16,12 +16,10 @@ export function WorkspaceSummary({
   state,
   onSetTerm,
   onSetCoupon,
-  onRent,
 }: {
   state: WorkspaceState;
   onSetTerm: (term: Term) => void;
   onSetCoupon: (value: string) => void;
-  onRent: () => void;
 }) {
   const { workspace, term } = state;
   const monthly = calculateMonthlyPrice(workspace);
@@ -29,11 +27,12 @@ export function WorkspaceSummary({
   const rentable = canRent(workspace);
   const lines = workspaceLines(workspace);
 
-  const { coupon: applied, subtotal, discount, total } = priceSummary(
-    monthly,
-    term,
-    state.coupon,
-  );
+  const {
+    coupon: applied,
+    subtotal,
+    discount,
+    total,
+  } = priceSummary(monthly, term, state.coupon);
 
   return (
     <aside
@@ -149,16 +148,6 @@ export function WorkspaceSummary({
           Choose a desk and chair to continue.
         </p>
       )}
-
-      <button
-        type="button"
-        onClick={onRent}
-        disabled={!rentable}
-        aria-describedby={rentable ? undefined : "rent-requirement"}
-        className="mt-4 w-full rounded-2xl bg-gold px-4 py-3 text-sm font-bold text-ink transition hover:brightness-105 disabled:cursor-not-allowed disabled:bg-white/15 disabled:text-cream/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-      >
-        Rent this workspace →
-      </button>
     </aside>
   );
 }
