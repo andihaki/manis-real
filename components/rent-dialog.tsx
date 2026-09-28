@@ -38,11 +38,12 @@ export function RentDialog({
 
   const monthly = calculateMonthlyPrice(state.workspace);
   const lines = workspaceLines(state.workspace);
-  const { coupon: applied, subtotal, discount, total } = priceSummary(
-    monthly,
-    state.term,
-    state.coupon,
-  );
+  const {
+    coupon: applied,
+    subtotal,
+    discount,
+    total,
+  } = priceSummary(monthly, state.term, state.coupon);
   const rented = state.status === "rented";
 
   return (
@@ -102,9 +103,7 @@ export function RentDialog({
                   <span>
                     {applied.code} · {applied.label}
                   </span>
-                  <span className="tabular-nums">
-                    −{formatUsd(discount)}
-                  </span>
+                  <span className="tabular-nums">−{formatUsd(discount)}</span>
                 </li>
               )}
               {discount > 0 && (
@@ -126,7 +125,7 @@ export function RentDialog({
               onClick={onEdit}
               className="mt-5 w-full rounded-2xl bg-ink px-4 py-3 text-sm font-bold text-cream transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
             >
-              Keep editing
+              Confirm
             </button>
           </div>
         ) : (
@@ -167,9 +166,7 @@ export function RentDialog({
                   <span>
                     {applied.code} · {applied.label}
                   </span>
-                  <span className="tabular-nums">
-                    −{formatUsd(discount)}
-                  </span>
+                  <span className="tabular-nums">−{formatUsd(discount)}</span>
                 </li>
               )}
               <li className="flex justify-between font-semibold">
