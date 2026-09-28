@@ -6,12 +6,84 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { products } from "@/lib/products";
 import type { Workspace } from "@/lib/types";
 import { ProductArt } from "./product-art";
-import { placeWorkspace } from "./scene-layout";
+import { placeWorkspace, type PlacedItem } from "./scene-layout";
+import {
+  buildProductModel,
+  modelHalfDepth,
+  modelSurfaceY,
+} from "./scene-models";
 import { createRoom, createShadowMaterial } from "./scene-room";
 import { svgToTexture } from "./scene-texture";
 
 const CAMERA_START = new THREE.Vector3(0, 7.4, 18.6);
 const CAMERA_TARGET = new THREE.Vector3(0, 3.4, -0.5);
+
+type Placement = { x: number; y: number; z: number; rotationY: number };
+
+/**
+ * Turns a flat-scene placement into a 3D arrangement.
+ *
+ * The 2D layout was tuned for zero-thickness planes: a monitor sat deeper than
+ * the desk it belongs to, and a chair sat at the desk's own z. Real geometry has
+ * depth and a real surface, so the pieces that rest on the desk are re-seated
+ * against it here.
+ */
+function arrange(
+  item: PlacedItem,
+  desk: PlacedItem | undefined,
+  deskSurface: number | null,
+): Placement {
+  // Stacked items (monitors) use the desk model's actual surface height instead
+  // of the estimate scene-layout.ts takes from the 2D art.
+  const baseY =
+    desk && deskSurface !== null && item.baseY > 0 ? deskSurface : item.baseY;
+
+  if (desk && item.product.category === "monitor") {
+    return {
+      x: item.position.x,
+      y: baseY,
+      // Sit it towards the back of the desktop rather than at its own layout
+      // depth, which is behind the desk entirely.
+      z: desk.position.z - modelHalfDepth(desk.product) * 0.3,
+      rotationY: 0,
+    };
+  }
+
+  if (desk && item.product.category === "chair") {
+    return {
+      x: item.position.x,
+      y: baseY,
+      // Clear the desk's footprint so the base cannot clip through it.
+      z:
+        desk.position.z +
+        modelHalfDepth(desk.product) +
+        modelHalfDepth(item.product) +
+        0.3,
+      // Models face +z, i.e. the viewer; a chair at the desk faces the desk.
+      rotationY: Math.PI,
+    };
+  }
+
+  return { x: item.position.x, y: baseY, z: item.position.z, rotationY: 0 };
+}
+
+/**
+ * Releases the GPU resources under a node. Materials flagged `userData.shared`
+ * (the palette and the contact-shadow blob) are deliberately left alone because
+ * they are reused across rebuilds and remounts.
+ */
+function disposeTree(root: THREE.Object3D): void {
+  root.traverse((child) => {
+    if (!(child instanceof THREE.Mesh)) return;
+    child.geometry.dispose();
+
+    const dispose = (material: THREE.Material) => {
+      if (material.userData.shared !== true) material.dispose();
+    };
+    if (Array.isArray(child.material)) child.material.forEach(dispose);
+    else dispose(child.material);
+  });
+}
 
 export function Workspace3D({ workspace }: { workspace: Workspace }) {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -28,6 +100,8 @@ export function Workspace3D({ workspace }: { workspace: Workspace }) {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.domElement.style.display = "block";
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
@@ -88,23 +162,9 @@ export function Workspace3D({ workspace }: { workspace: Workspace }) {
       controls.dispose();
       renderer.dispose();
 
-      // Room meshes own their textures, so those go with them.
-      room.traverse((child) => {
-        if (!(child instanceof THREE.Mesh)) return;
-        child.geometry.dispose();
-        const material = child.material;
-        if (Array.isArray(material)) material.forEach((entry) => entry.dispose());
-        else material.dispose();
-      });
-
-      // Item materials only borrow product textures, which are disposed below.
-      items.traverse((child) => {
-        if (!(child instanceof THREE.Mesh)) return;
-        child.geometry.dispose();
-        const material = child.material;
-        if (Array.isArray(material)) material.forEach((entry) => entry.dispose());
-        else if (material !== shadowMaterial) material.dispose();
-      });
+      // Shared palette materials survive; everything else is owned here.
+      disposeTree(room);
+      disposeTree(items);
 
       shadowMaterial.map?.dispose();
       shadowMaterial.dispose();
@@ -158,42 +218,53 @@ export function Workspace3D({ workspace }: { workspace: Workspace }) {
 
     for (const child of [...items.children]) {
       items.remove(child);
-      if (child instanceof THREE.Mesh) {
-        child.geometry.dispose();
-        if (
-          child.material instanceof THREE.MeshBasicMaterial &&
-          child.material !== shadowMaterial
-        ) {
-          child.material.dispose();
-        }
-      }
+      disposeTree(child);
     }
 
-    for (const item of placeWorkspace(workspace)) {
+    const placed = placeWorkspace(workspace);
+    const desk = placed.find((item) => item.product.category === "desk");
+    const deskSurface = desk ? modelSurfaceY(desk.product) : null;
+
+    for (const item of placed) {
+      const placement = arrange(item, desk, deskSurface);
+
+      const model = buildProductModel(item.product);
+      if (model) {
+        model.position.set(placement.x, placement.y, placement.z);
+        model.rotation.y = placement.rotationY;
+        items.add(model);
+        continue;
+      }
+
+      // Not modelled yet, so fall back to the 2D art on a lit billboard.
       const texture = texturesRef.current.get(item.product.id);
       if (!texture) continue;
 
       const mesh = new THREE.Mesh(
         new THREE.PlaneGeometry(item.size.width, item.size.height),
-        new THREE.MeshBasicMaterial({
+        new THREE.MeshLambertMaterial({
           map: texture,
           transparent: true,
           alphaTest: 0.05,
           side: THREE.DoubleSide,
         }),
       );
-      mesh.position.set(item.position.x, item.position.y, item.position.z);
+      mesh.position.set(
+        placement.x,
+        placement.y + item.size.height / 2,
+        placement.z,
+      );
       items.add(mesh);
 
-      // Items stacked on the desk already sit above the floor, so only
-      // floor-standing pieces cast a contact shadow.
+      // Billboards are flat, so they get a painted blob rather than a real
+      // shadow. Stacked items already sit above the floor and get none.
       if (shadowMaterial && item.baseY === 0) {
         const shadow = new THREE.Mesh(
           new THREE.PlaneGeometry(item.size.width * 0.95, item.size.width * 0.3),
           shadowMaterial,
         );
         shadow.rotation.x = -Math.PI / 2;
-        shadow.position.set(item.position.x, 0.02, item.position.z);
+        shadow.position.set(placement.x, 0.02, placement.z);
         items.add(shadow);
       }
     }

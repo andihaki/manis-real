@@ -14,6 +14,13 @@ const SUN = "#FFE9B0";
 const SHADOW = "rgba(35, 48, 58, 0.30)";
 const RUG = "#D9684B";
 
+/**
+ * Lighting knobs. The models are shaded with MeshLambertMaterial, so these two
+ * numbers are what control how bright the whole 3D scene reads.
+ */
+const AMBIENT_INTENSITY = 0.45;
+const KEY_INTENSITY = 0.85;
+
 function paintCanvas(
   width: number,
   height: number,
@@ -62,7 +69,7 @@ function createWindow(): THREE.Group {
 
   const pane = new THREE.Mesh(
     new THREE.PlaneGeometry(paneWidth, paneHeight),
-    new THREE.MeshBasicMaterial({
+    new THREE.MeshLambertMaterial({
       map: verticalGradient([
         [0, SKY_TOP],
         [1, SKY_BOTTOM],
@@ -74,12 +81,12 @@ function createWindow(): THREE.Group {
 
   const sun = new THREE.Mesh(
     new THREE.CircleGeometry(0.55, 32),
-    new THREE.MeshBasicMaterial({ color: SUN }),
+    new THREE.MeshLambertMaterial({ color: SUN }),
   );
   sun.position.set(1.5, 1.25, 0.03);
   group.add(sun);
 
-  const frame = new THREE.MeshBasicMaterial({ color: FRAME });
+  const frame = new THREE.MeshLambertMaterial({ color: FRAME });
   group.add(bar(paneWidth + 0.4, 0.2, 0.12, [0, paneHeight / 2, 0.05], frame));
   group.add(bar(paneWidth + 0.4, 0.2, 0.12, [0, -paneHeight / 2, 0.05], frame));
   group.add(bar(0.2, paneHeight, 0.12, [-paneWidth / 2, 0, 0.05], frame));
@@ -92,7 +99,10 @@ function createWindow(): THREE.Group {
   return group;
 }
 
-/** Soft radial blob reused as a contact shadow under every floor-standing item. */
+/**
+ * Soft radial blob used as a contact shadow under items that are still 2D
+ * billboards. Modelled products cast a real shadow from the key light instead.
+ */
 export function createShadowMaterial(): THREE.MeshBasicMaterial {
   const texture = paintCanvas(128, 128, (context) => {
     const size = context.canvas.width;
@@ -110,11 +120,13 @@ export function createShadowMaterial(): THREE.MeshBasicMaterial {
     context.fillRect(0, 0, size, size);
   });
 
-  return new THREE.MeshBasicMaterial({
+  const material = new THREE.MeshBasicMaterial({
     map: texture,
     transparent: true,
     depthWrite: false,
   });
+  material.userData.shared = true;
+  return material;
 }
 
 function createFloorTexture(): THREE.CanvasTexture {
@@ -137,13 +149,38 @@ function createFloorTexture(): THREE.CanvasTexture {
   });
 }
 
+function createLighting(): THREE.Group {
+  const lighting = new THREE.Group();
+
+  const key = new THREE.DirectionalLight(0xfff6e8, KEY_INTENSITY);
+  key.position.set(7, 13, 9);
+  key.target.position.set(0, 1, -1);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.near = 1;
+  key.shadow.camera.far = 48;
+  key.shadow.camera.left = -14;
+  key.shadow.camera.right = 14;
+  key.shadow.camera.top = 14;
+  key.shadow.camera.bottom = -10;
+  key.shadow.bias = -0.0006;
+  key.shadow.normalBias = 0.02;
+  key.shadow.camera.updateProjectionMatrix();
+
+  lighting.add(key);
+  lighting.add(key.target);
+  lighting.add(new THREE.HemisphereLight(0xfff3e0, 0xd9b88f, AMBIENT_INTENSITY));
+
+  return lighting;
+}
+
 export function createRoom(): THREE.Group {
   const room = new THREE.Group();
   const wallZ = -ROOM_SIZE.depth / 2;
 
   const wall = new THREE.Mesh(
     new THREE.PlaneGeometry(ROOM_SIZE.width, ROOM_SIZE.height),
-    new THREE.MeshBasicMaterial({
+    new THREE.MeshLambertMaterial({
       map: verticalGradient([
         [0, WALL_TOP],
         [1, WALL_BOTTOM],
@@ -151,13 +188,15 @@ export function createRoom(): THREE.Group {
     }),
   );
   wall.position.set(0, ROOM_SIZE.height / 2, wallZ);
+  wall.receiveShadow = true;
   room.add(wall);
 
   const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(ROOM_SIZE.width, ROOM_SIZE.depth),
-    new THREE.MeshBasicMaterial({ map: createFloorTexture() }),
+    new THREE.MeshLambertMaterial({ map: createFloorTexture() }),
   );
   floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
   room.add(floor);
 
   room.add(
@@ -166,13 +205,13 @@ export function createRoom(): THREE.Group {
       0.16,
       0.12,
       [0, 0.08, wallZ + 0.06],
-      new THREE.MeshBasicMaterial({ color: BASEBOARD }),
+      new THREE.MeshLambertMaterial({ color: BASEBOARD }),
     ),
   );
 
   const rug = new THREE.Mesh(
     new THREE.CircleGeometry(1, 48),
-    new THREE.MeshBasicMaterial({
+    new THREE.MeshLambertMaterial({
       color: RUG,
       transparent: true,
       opacity: 0.16,
@@ -185,6 +224,7 @@ export function createRoom(): THREE.Group {
   room.add(rug);
 
   room.add(createWindow());
+  room.add(createLighting());
 
   return room;
 }
