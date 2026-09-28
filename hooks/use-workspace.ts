@@ -2,6 +2,8 @@
 
 import { useCallback, useMemo, useReducer } from "react";
 import {
+  beanBagProduct,
+  coffeeStationProduct,
   lampProduct,
   monitorProduct,
   plantProduct,
@@ -44,6 +46,15 @@ export function useWorkspace() {
     () => dispatch({ type: "togglePlant", product: plantProduct }),
     [],
   );
+  const toggleBeanBag = useCallback(
+    () => dispatch({ type: "toggleBeanBag", product: beanBagProduct }),
+    [],
+  );
+  const toggleCoffeeStation = useCallback(
+    () =>
+      dispatch({ type: "toggleCoffeeStation", product: coffeeStationProduct }),
+    [],
+  );
   const setTerm = useCallback(
     (term: Term) => dispatch({ type: "setTerm", term }),
     [],
@@ -69,6 +80,8 @@ export function useWorkspace() {
       removeMonitor,
       toggleLamp,
       togglePlant,
+      toggleBeanBag,
+      toggleCoffeeStation,
       setTerm,
       setCoupon,
       reset,
@@ -84,6 +97,8 @@ export function useWorkspace() {
       removeMonitor,
       toggleLamp,
       togglePlant,
+      toggleBeanBag,
+      toggleCoffeeStation,
       setTerm,
       setCoupon,
       reset,

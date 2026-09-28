@@ -10,7 +10,7 @@ Brief wants a visual, playful "see it come to life" experience. No assets exist 
 
 - One scene container with a fixed aspect ratio.
 - Room (wall + floor) drawn as CSS gradients + simple SVG — no raster background.
-- **8 products** authored as inline SVG React components in one flat, consistent palette and pseudo-isometric style.
+- **10 products** authored as inline SVG React components in one flat, consistent palette and pseudo-isometric style.
 - Products positioned by category/slot using CSS percentages + `z-index`. No drag, no free positioning.
 - Motion via CSS transitions only (no Framer Motion).
 

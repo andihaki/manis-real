@@ -47,13 +47,13 @@ function ToggleCard({
         <span className="block text-xs text-ink/50">
           {formatUsd(product.pricePerMonth)}/mo
         </span>
-      </span>
-      <span
-        className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${
-          active ? "bg-teal text-white" : "bg-sand text-ink/70"
-        }`}
-      >
-        {active ? "✓ Added" : "+ Add"}
+        <span
+          className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${
+            active ? "bg-teal text-white" : "bg-sand text-ink/70"
+          }`}
+        >
+          {active ? "✓ Added" : "+ Add"}
+        </span>
       </span>
     </button>
   );
@@ -127,6 +127,8 @@ export function ProductSelector({
   onRemoveMonitor,
   onToggleLamp,
   onTogglePlant,
+  onToggleBeanBag,
+  onToggleCoffeeStation,
 }: {
   workspace: Workspace;
   onSelectDesk: (product: Product) => void;
@@ -135,12 +137,16 @@ export function ProductSelector({
   onRemoveMonitor: () => void;
   onToggleLamp: () => void;
   onTogglePlant: () => void;
+  onToggleBeanBag: () => void;
+  onToggleCoffeeStation: () => void;
 }) {
   const desks = productsByCategory("desk");
   const chairs = productsByCategory("chair");
   const monitor = productsByCategory("monitor")[0];
   const lamp = productsByCategory("lamp")[0];
   const plant = productsByCategory("plant")[0];
+  const beanBag = productsByCategory("bean-bag")[0];
+  const coffeeStation = productsByCategory("coffee-station")[0];
   const monitorCount = workspace.monitors.length;
 
   return (
@@ -196,6 +202,16 @@ export function ProductSelector({
             product={plant}
             active={workspace.plant !== null}
             onToggle={onTogglePlant}
+          />
+          <ToggleCard
+            product={beanBag}
+            active={workspace.beanBag !== null}
+            onToggle={onToggleBeanBag}
+          />
+          <ToggleCard
+            product={coffeeStation}
+            active={workspace.coffeeStation !== null}
+            onToggle={onToggleCoffeeStation}
           />
         </div>
       </div>

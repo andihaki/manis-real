@@ -35,7 +35,9 @@ export function WorkspaceScene({ workspace }: { workspace: Workspace }) {
     !workspace.chair &&
     workspace.monitors.length === 0 &&
     !workspace.lamp &&
-    !workspace.plant;
+    !workspace.plant &&
+    !workspace.beanBag &&
+    !workspace.coffeeStation;
 
   return (
     <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl ring-1 ring-black/5 shadow-sm">
@@ -43,6 +45,12 @@ export function WorkspaceScene({ workspace }: { workspace: Workspace }) {
 
       {workspace.plant && (
         <SceneItem key={workspace.plant.id} product={workspace.plant} />
+      )}
+      {workspace.coffeeStation && (
+        <SceneItem
+          key={workspace.coffeeStation.id}
+          product={workspace.coffeeStation}
+        />
       )}
       {workspace.desk && (
         <SceneItem key={workspace.desk.id} product={workspace.desk} />
@@ -58,6 +66,9 @@ export function WorkspaceScene({ workspace }: { workspace: Workspace }) {
           z={monitorLayout.z + index}
         />
       ))}
+      {workspace.beanBag && (
+        <SceneItem key={workspace.beanBag.id} product={workspace.beanBag} />
+      )}
       {workspace.chair && (
         <SceneItem key={workspace.chair.id} product={workspace.chair} />
       )}

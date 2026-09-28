@@ -17,6 +17,8 @@ export function Configurator() {
     removeMonitor,
     toggleLamp,
     togglePlant,
+    toggleBeanBag,
+    toggleCoffeeStation,
     setTerm,
     setCoupon,
     reset,
@@ -70,6 +72,8 @@ export function Configurator() {
             onRemoveMonitor={removeMonitor}
             onToggleLamp={toggleLamp}
             onTogglePlant={togglePlant}
+            onToggleBeanBag={toggleBeanBag}
+            onToggleCoffeeStation={toggleCoffeeStation}
           />
           <WorkspaceSummary
             state={state}

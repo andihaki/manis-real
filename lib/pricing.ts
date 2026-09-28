@@ -44,6 +44,8 @@ function selected(workspace: Workspace): Product[] {
     workspace.chair,
     workspace.lamp,
     workspace.plant,
+    workspace.beanBag,
+    workspace.coffeeStation,
     ...workspace.monitors,
   ].filter((product): product is Product => product !== null);
 }
@@ -111,6 +113,20 @@ export function workspaceLines(workspace: Workspace): RentalLine[] {
       id: "plant",
       label: workspace.plant.name,
       amount: workspace.plant.pricePerMonth,
+    });
+  }
+  if (workspace.beanBag) {
+    lines.push({
+      id: "bean-bag",
+      label: workspace.beanBag.name,
+      amount: workspace.beanBag.pricePerMonth,
+    });
+  }
+  if (workspace.coffeeStation) {
+    lines.push({
+      id: "coffee-station",
+      label: workspace.coffeeStation.name,
+      amount: workspace.coffeeStation.pricePerMonth,
     });
   }
   return lines;

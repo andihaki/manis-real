@@ -12,6 +12,8 @@ export const emptyWorkspace: Workspace = {
   monitors: [],
   lamp: null,
   plant: null,
+  beanBag: null,
+  coffeeStation: null,
 };
 
 export const initialWorkspaceState: WorkspaceState = {
@@ -79,6 +81,25 @@ export function workspaceReducer(
         workspace: {
           ...state.workspace,
           plant: toggleOne(state.workspace.plant, action.product),
+        },
+      };
+    case "toggleBeanBag":
+      return {
+        ...state,
+        workspace: {
+          ...state.workspace,
+          beanBag: toggleOne(state.workspace.beanBag, action.product),
+        },
+      };
+    case "toggleCoffeeStation":
+      return {
+        ...state,
+        workspace: {
+          ...state.workspace,
+          coffeeStation: toggleOne(
+            state.workspace.coffeeStation,
+            action.product,
+          ),
         },
       };
     case "setTerm":

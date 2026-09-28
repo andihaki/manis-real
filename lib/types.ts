@@ -1,4 +1,11 @@
-export type Category = "desk" | "chair" | "monitor" | "lamp" | "plant";
+export type Category =
+  | "desk"
+  | "chair"
+  | "monitor"
+  | "lamp"
+  | "plant"
+  | "bean-bag"
+  | "coffee-station";
 
 /** A percentage-based box inside the scene container. */
 export type Layout = {
@@ -24,6 +31,8 @@ export type Workspace = {
   monitors: Product[];
   lamp: Product | null;
   plant: Product | null;
+  beanBag: Product | null;
+  coffeeStation: Product | null;
 };
 
 export type Coupon = {
@@ -53,6 +62,8 @@ export type WorkspaceAction =
   | { type: "removeMonitor" }
   | { type: "toggleLamp"; product: Product }
   | { type: "togglePlant"; product: Product }
+  | { type: "toggleBeanBag"; product: Product }
+  | { type: "toggleCoffeeStation"; product: Product }
   | { type: "setTerm"; term: Term }
   | { type: "setCoupon"; value: string }
   | { type: "reset" }
