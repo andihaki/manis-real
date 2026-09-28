@@ -1,0 +1,232 @@
+import type { Product } from "@/lib/types";
+
+/**
+ * One shared flat palette keeps the eight products looking like one set,
+ * which is what makes the layered scene read as a room rather than a collage.
+ */
+const palette = {
+  oak: "#D9A46B",
+  oakLight: "#E7BC8C",
+  timber: "#A9713F",
+  timberLight: "#C08A55",
+  walnut: "#7C4A2D",
+  walnutMid: "#8A5533",
+  walnutDark: "#5E3620",
+  drawer: "#6E4026",
+  metal: "#7A828C",
+  metalDark: "#5A6169",
+  mesh: "#8FA0AC",
+  charcoal: "#2E3A42",
+  slate: "#46545E",
+  teal: "#2A9D8F",
+  moss: "#5B8C51",
+  mossDark: "#3F6B39",
+  terracotta: "#D9684B",
+  terracottaLight: "#E27F63",
+  gold: "#F2B544",
+  screen: "#12314A",
+  screenGlare: "#1E4E73",
+  glow: "#FFE7A8",
+  shadow: "rgba(35, 48, 58, 0.10)",
+} as const;
+
+const svgProps = {
+  preserveAspectRatio: "xMidYMax meet",
+  className: "h-full w-full",
+  "aria-hidden": true,
+  focusable: false,
+} as const;
+
+function MinimalDesk() {
+  return (
+    <svg viewBox="0 0 300 160" {...svgProps}>
+      <ellipse cx="150" cy="150" rx="124" ry="8" fill={palette.shadow} />
+      <rect x="18" y="30" width="264" height="16" rx="8" fill={palette.oak} />
+      <rect x="18" y="30" width="264" height="6" rx="3" fill={palette.oakLight} />
+      <rect x="34" y="46" width="9" height="98" rx="4" fill={palette.metal} />
+      <rect x="257" y="46" width="9" height="98" rx="4" fill={palette.metal} />
+      <rect x="34" y="108" width="232" height="7" rx="3" fill={palette.metalDark} />
+    </svg>
+  );
+}
+
+function StandingDesk() {
+  return (
+    <svg viewBox="0 0 300 170" {...svgProps}>
+      <ellipse cx="150" cy="160" rx="122" ry="8" fill={palette.shadow} />
+      <rect x="16" y="28" width="268" height="15" rx="7" fill={palette.timber} />
+      <rect x="16" y="28" width="268" height="5" rx="3" fill={palette.timberLight} />
+      <rect x="48" y="43" width="22" height="72" rx="5" fill={palette.metal} />
+      <rect x="54" y="112" width="10" height="34" rx="4" fill={palette.metalDark} />
+      <rect x="230" y="43" width="22" height="72" rx="5" fill={palette.metal} />
+      <rect x="236" y="112" width="10" height="34" rx="4" fill={palette.metalDark} />
+      <rect x="28" y="146" width="56" height="9" rx="4" fill={palette.charcoal} />
+      <rect x="216" y="146" width="56" height="9" rx="4" fill={palette.charcoal} />
+      <rect x="196" y="50" width="28" height="12" rx="3" fill={palette.charcoal} />
+      <circle cx="204" cy="56" r="2" fill={palette.gold} />
+      <circle cx="212" cy="56" r="2" fill={palette.metal} />
+    </svg>
+  );
+}
+
+function ExecutiveDesk() {
+  return (
+    <svg viewBox="0 0 300 160" {...svgProps}>
+      <ellipse cx="150" cy="150" rx="128" ry="8" fill={palette.shadow} />
+      <rect x="14" y="30" width="272" height="18" rx="7" fill={palette.walnut} />
+      <rect x="14" y="30" width="272" height="6" rx="3" fill={palette.walnutMid} />
+      <rect x="26" y="48" width="22" height="96" rx="5" fill={palette.walnutDark} />
+      <rect x="252" y="48" width="22" height="96" rx="5" fill={palette.walnutDark} />
+      <rect x="58" y="54" width="96" height="44" rx="5" fill={palette.walnutMid} />
+      <rect x="66" y="64" width="80" height="24" rx="3" fill={palette.drawer} />
+      <rect x="70" y="73" width="28" height="5" rx="2" fill={palette.gold} />
+    </svg>
+  );
+}
+
+function MeshChair() {
+  return (
+    <svg viewBox="0 0 160 240" {...svgProps}>
+      <ellipse cx="80" cy="230" rx="58" ry="7" fill={palette.shadow} />
+      <rect x="36" y="14" width="88" height="106" rx="20" fill={palette.charcoal} />
+      <rect x="44" y="22" width="72" height="90" rx="15" fill={palette.slate} />
+      <g stroke={palette.mesh} strokeWidth="2" opacity="0.45">
+        <line x1="54" y1="32" x2="54" y2="102" />
+        <line x1="66" y1="28" x2="66" y2="106" />
+        <line x1="78" y1="26" x2="78" y2="108" />
+        <line x1="90" y1="28" x2="90" y2="106" />
+        <line x1="102" y1="32" x2="102" y2="102" />
+      </g>
+      <rect x="22" y="104" width="12" height="32" rx="6" fill={palette.slate} />
+      <rect x="126" y="104" width="12" height="32" rx="6" fill={palette.slate} />
+      <rect x="24" y="122" width="112" height="22" rx="10" fill={palette.charcoal} />
+      <rect x="75" y="144" width="10" height="40" rx="4" fill={palette.metal} />
+      <g stroke={palette.metal} strokeWidth="7" strokeLinecap="round">
+        <line x1="80" y1="184" x2="42" y2="212" />
+        <line x1="80" y1="184" x2="118" y2="212" />
+        <line x1="80" y1="184" x2="80" y2="216" />
+        <line x1="80" y1="184" x2="56" y2="222" />
+        <line x1="80" y1="184" x2="104" y2="222" />
+      </g>
+      <g fill={palette.charcoal}>
+        <circle cx="42" cy="214" r="6" />
+        <circle cx="118" cy="214" r="6" />
+        <circle cx="80" cy="218" r="6" />
+        <circle cx="56" cy="224" r="6" />
+        <circle cx="104" cy="224" r="6" />
+      </g>
+    </svg>
+  );
+}
+
+function ErgonomicChair() {
+  return (
+    <svg viewBox="0 0 170 250" {...svgProps}>
+      <ellipse cx="85" cy="240" rx="60" ry="7" fill={palette.shadow} />
+      <rect x="58" y="8" width="54" height="24" rx="11" fill={palette.charcoal} />
+      <rect x="34" y="34" width="102" height="106" rx="22" fill={palette.charcoal} />
+      <rect x="42" y="42" width="86" height="90" rx="17" fill={palette.slate} />
+      <rect x="52" y="106" width="66" height="16" rx="8" fill={palette.teal} />
+      <rect x="22" y="118" width="14" height="36" rx="7" fill={palette.slate} />
+      <rect x="134" y="118" width="14" height="36" rx="7" fill={palette.slate} />
+      <rect x="22" y="146" width="126" height="24" rx="11" fill={palette.charcoal} />
+      <rect x="80" y="170" width="10" height="42" rx="4" fill={palette.metal} />
+      <g stroke={palette.metal} strokeWidth="7" strokeLinecap="round">
+        <line x1="85" y1="212" x2="45" y2="238" />
+        <line x1="85" y1="212" x2="125" y2="238" />
+        <line x1="85" y1="212" x2="85" y2="244" />
+        <line x1="85" y1="212" x2="60" y2="248" />
+        <line x1="85" y1="212" x2="110" y2="248" />
+      </g>
+      <g fill={palette.charcoal}>
+        <circle cx="45" cy="240" r="6" />
+        <circle cx="125" cy="240" r="6" />
+        <circle cx="85" cy="246" r="6" />
+        <circle cx="60" cy="250" r="6" />
+        <circle cx="110" cy="250" r="6" />
+      </g>
+    </svg>
+  );
+}
+
+function Monitor() {
+  return (
+    <svg viewBox="0 0 210 180" {...svgProps}>
+      <rect x="12" y="8" width="186" height="118" rx="10" fill={palette.charcoal} />
+      <rect x="20" y="16" width="170" height="102" rx="6" fill={palette.screen} />
+      <path
+        d="M20 96 L120 16 L162 16 L20 78 Z"
+        fill={palette.screenGlare}
+        opacity="0.55"
+      />
+      <rect x="96" y="126" width="18" height="26" fill={palette.metalDark} />
+      <rect x="58" y="152" width="94" height="12" rx="6" fill={palette.metal} />
+    </svg>
+  );
+}
+
+function DeskLamp() {
+  return (
+    <svg viewBox="0 0 140 210" {...svgProps}>
+      <ellipse cx="70" cy="196" rx="42" ry="8" fill={palette.shadow} />
+      <ellipse cx="70" cy="192" rx="36" ry="7" fill={palette.charcoal} />
+      <rect x="67" y="70" width="6" height="122" rx="3" fill={palette.charcoal} />
+      <path
+        d="M70 74 L70 44 L104 40"
+        stroke={palette.charcoal}
+        strokeWidth="6"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path d="M86 22 L128 34 L114 68 L80 54 Z" fill={palette.terracotta} />
+      <ellipse cx="97" cy="61" rx="16" ry="8" fill={palette.glow} />
+    </svg>
+  );
+}
+
+function PottedPlant() {
+  return (
+    <svg viewBox="0 0 140 210" {...svgProps}>
+      <ellipse cx="70" cy="198" rx="40" ry="7" fill={palette.shadow} />
+      <g fill={palette.moss}>
+        <path d="M70 150 C70 110 52 92 40 70 C62 76 72 100 70 150 Z" />
+        <path d="M70 150 C70 108 90 92 102 68 C80 74 70 100 70 150 Z" />
+      </g>
+      <g fill={palette.mossDark}>
+        <path d="M70 152 C70 120 88 112 108 104 C96 128 84 136 70 152 Z" />
+        <path d="M70 152 C70 120 52 112 32 104 C44 128 56 136 70 152 Z" />
+      </g>
+      <path
+        d="M70 152 C70 118 70 96 70 74"
+        stroke={palette.mossDark}
+        strokeWidth="3"
+        fill="none"
+      />
+      <path d="M38 148 L102 148 L92 196 L48 196 Z" fill={palette.terracotta} />
+      <rect x="33" y="138" width="74" height="16" rx="6" fill={palette.terracottaLight} />
+    </svg>
+  );
+}
+
+export function ProductArt({ product }: { product: Product }) {
+  switch (product.id) {
+    case "minimal-desk":
+      return <MinimalDesk />;
+    case "standing-desk":
+      return <StandingDesk />;
+    case "executive-desk":
+      return <ExecutiveDesk />;
+    case "mesh-chair":
+      return <MeshChair />;
+    case "ergonomic-chair":
+      return <ErgonomicChair />;
+    case "monitor":
+      return <Monitor />;
+    case "desk-lamp":
+      return <DeskLamp />;
+    case "potted-plant":
+      return <PottedPlant />;
+    default:
+      return null;
+  }
+}
