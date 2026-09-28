@@ -15,5 +15,6 @@ Shared vocabulary. All terms below are **decided**.
 - **Slot** — Concrete position under an Anchor, e.g. `desk-surface:monitor[0..2]`.
 - **Layer / z-order** — Paint order: background → plant → desk → lamp → monitor → chair.
 - **Term** — Rental duration in months: 1, 3, 6, or 12.
+- **Coupon** — Code typed in the summary that discounts the term total by a percentage. Sample codes are hardcoded.
 - **Rent** — The commit action. Mocked: no payment or backend.
 - **Confirmation** — Success state after Rent, with a generated reference.

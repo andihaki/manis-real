@@ -17,6 +17,7 @@ export function Configurator() {
     toggleLamp,
     togglePlant,
     setTerm,
+    setCoupon,
     reset,
     beginRent,
     cancelRent,
@@ -69,7 +70,12 @@ export function Configurator() {
             onToggleLamp={toggleLamp}
             onTogglePlant={togglePlant}
           />
-          <WorkspaceSummary state={state} onSetTerm={setTerm} onRent={beginRent} />
+          <WorkspaceSummary
+            state={state}
+            onSetTerm={setTerm}
+            onSetCoupon={setCoupon}
+            onRent={beginRent}
+          />
         </div>
       </div>
 

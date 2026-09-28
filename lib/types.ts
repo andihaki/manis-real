@@ -26,6 +26,12 @@ export type Workspace = {
   plant: Product | null;
 };
 
+export type Coupon = {
+  code: string;
+  percentOff: number;
+  label: string;
+};
+
 export type Term = 1 | 3 | 6 | 12;
 
 export const TERMS: Term[] = [1, 3, 6, 12];
@@ -35,6 +41,7 @@ export type RentStatus = "editing" | "confirming" | "rented";
 export type WorkspaceState = {
   workspace: Workspace;
   term: Term;
+  coupon: string;
   status: RentStatus;
   reference: string | null;
 };
@@ -47,6 +54,7 @@ export type WorkspaceAction =
   | { type: "toggleLamp"; product: Product }
   | { type: "togglePlant"; product: Product }
   | { type: "setTerm"; term: Term }
+  | { type: "setCoupon"; value: string }
   | { type: "reset" }
   | { type: "beginRent" }
   | { type: "confirmRent"; reference: string }

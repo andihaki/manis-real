@@ -16,7 +16,8 @@ export const emptyWorkspace: Workspace = {
 
 export const initialWorkspaceState: WorkspaceState = {
   workspace: emptyWorkspace,
-  term: 3,
+  term: 1,
+  coupon: "",
   status: "editing",
   reference: null,
 };
@@ -82,6 +83,8 @@ export function workspaceReducer(
       };
     case "setTerm":
       return { ...state, term: action.term };
+    case "setCoupon":
+      return { ...state, coupon: action.value };
     case "reset":
       return { ...initialWorkspaceState, term: state.term };
     case "beginRent":

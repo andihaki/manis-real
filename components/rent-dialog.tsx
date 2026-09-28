@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import {
   calculateMonthlyPrice,
   formatUsd,
+  priceSummary,
   workspaceLines,
 } from "@/lib/pricing";
 import type { WorkspaceState } from "@/lib/types";
@@ -37,6 +38,11 @@ export function RentDialog({
 
   const monthly = calculateMonthlyPrice(state.workspace);
   const lines = workspaceLines(state.workspace);
+  const { coupon: applied, subtotal, discount, total } = priceSummary(
+    monthly,
+    state.term,
+    state.coupon,
+  );
   const rented = state.status === "rented";
 
   return (
@@ -80,6 +86,33 @@ export function RentDialog({
                 <span>Monthly</span>
                 <span className="tabular-nums">{formatUsd(monthly)}</span>
               </li>
+              {discount > 0 && (
+                <li className="flex justify-between gap-4">
+                  <span className="text-ink/80">
+                    Subtotal over {state.term} month
+                    {state.term === 1 ? "" : "s"}
+                  </span>
+                  <span className="tabular-nums text-ink/60">
+                    {formatUsd(subtotal)}
+                  </span>
+                </li>
+              )}
+              {applied && (
+                <li className="flex justify-between gap-4 font-semibold text-teal">
+                  <span>
+                    {applied.code} · {applied.label}
+                  </span>
+                  <span className="tabular-nums">
+                    −{formatUsd(discount)}
+                  </span>
+                </li>
+              )}
+              {discount > 0 && (
+                <li className="flex justify-between border-t border-black/10 pt-2 font-semibold">
+                  <span>Total {state.term} months rental</span>
+                  <span className="tabular-nums">{formatUsd(total)}</span>
+                </li>
+              )}
             </ul>
 
             <p className="mt-4 text-sm text-ink/70">
@@ -118,11 +151,30 @@ export function RentDialog({
                 <span>Monthly rental</span>
                 <span className="tabular-nums">{formatUsd(monthly)}</span>
               </li>
+              {discount > 0 && (
+                <li className="flex justify-between gap-4">
+                  <span className="text-ink/80">
+                    Subtotal over {state.term} month
+                    {state.term === 1 ? "" : "s"}
+                  </span>
+                  <span className="tabular-nums text-ink/60">
+                    {formatUsd(subtotal)}
+                  </span>
+                </li>
+              )}
+              {applied && (
+                <li className="flex justify-between gap-4 font-semibold text-teal">
+                  <span>
+                    {applied.code} · {applied.label}
+                  </span>
+                  <span className="tabular-nums">
+                    −{formatUsd(discount)}
+                  </span>
+                </li>
+              )}
               <li className="flex justify-between font-semibold">
                 <span>Total {state.term} months rental</span>
-                <span className="tabular-nums">
-                  {formatUsd(monthly * state.term)}
-                </span>
+                <span className="tabular-nums">{formatUsd(total)}</span>
               </li>
             </ul>
 

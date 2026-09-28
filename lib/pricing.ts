@@ -1,4 +1,42 @@
-import type { Product, Workspace } from "./types";
+import type { Coupon, Product, Term, Workspace } from "./types";
+
+export const SAMPLE_COUPONS: Coupon[] = [
+  { code: "DESK10", percentOff: 10, label: "10% off" },
+  { code: "OFFICE20", percentOff: 20, label: "20% off" },
+  { code: "WELCOME25", percentOff: 25, label: "25% off" },
+];
+
+export function findCoupon(entered: string): Coupon | null {
+  const code = entered.trim().toUpperCase();
+  if (code === "") return null;
+  return SAMPLE_COUPONS.find((coupon) => coupon.code === code) ?? null;
+}
+
+export function couponDiscount(
+  subtotal: number,
+  coupon: Coupon | null,
+): number {
+  if (!coupon) return 0;
+  return (subtotal * coupon.percentOff) / 100;
+}
+
+export type PriceSummary = {
+  coupon: Coupon | null;
+  subtotal: number;
+  discount: number;
+  total: number;
+};
+
+export function priceSummary(
+  monthly: number,
+  term: Term,
+  couponText: string,
+): PriceSummary {
+  const coupon = findCoupon(couponText);
+  const subtotal = monthly * term;
+  const discount = couponDiscount(subtotal, coupon);
+  return { coupon, subtotal, discount, total: subtotal - discount };
+}
 
 function selected(workspace: Workspace): Product[] {
   return [

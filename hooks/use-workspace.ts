@@ -48,6 +48,10 @@ export function useWorkspace() {
     (term: Term) => dispatch({ type: "setTerm", term }),
     [],
   );
+  const setCoupon = useCallback(
+    (value: string) => dispatch({ type: "setCoupon", value }),
+    [],
+  );
   const reset = useCallback(() => dispatch({ type: "reset" }), []);
   const beginRent = useCallback(() => dispatch({ type: "beginRent" }), []);
   const cancelRent = useCallback(() => dispatch({ type: "cancelRent" }), []);
@@ -66,6 +70,7 @@ export function useWorkspace() {
       toggleLamp,
       togglePlant,
       setTerm,
+      setCoupon,
       reset,
       beginRent,
       cancelRent,
@@ -80,6 +85,7 @@ export function useWorkspace() {
       toggleLamp,
       togglePlant,
       setTerm,
+      setCoupon,
       reset,
       beginRent,
       cancelRent,

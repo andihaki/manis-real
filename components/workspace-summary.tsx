@@ -5,18 +5,22 @@ import {
   canRent,
   countItems,
   formatUsd,
+  priceSummary,
   workspaceLines,
 } from "@/lib/pricing";
 import { TERMS } from "@/lib/types";
 import type { Term, WorkspaceState } from "@/lib/types";
+import { CouponInput } from "./coupon-input";
 
 export function WorkspaceSummary({
   state,
   onSetTerm,
+  onSetCoupon,
   onRent,
 }: {
   state: WorkspaceState;
   onSetTerm: (term: Term) => void;
+  onSetCoupon: (value: string) => void;
   onRent: () => void;
 }) {
   const { workspace, term } = state;
@@ -24,6 +28,12 @@ export function WorkspaceSummary({
   const items = countItems(workspace);
   const rentable = canRent(workspace);
   const lines = workspaceLines(workspace);
+
+  const { coupon: applied, subtotal, discount, total } = priceSummary(
+    monthly,
+    term,
+    state.coupon,
+  );
 
   return (
     <aside
@@ -96,15 +106,39 @@ export function WorkspaceSummary({
         )}
       </fieldset>
 
+      <CouponInput value={state.coupon} onChange={onSetCoupon} />
+      {applied && (
+        <div className="mt-3 flex items-baseline justify-between gap-4">
+          <span className="text-sm text-teal">
+            {applied.code} · {applied.label}
+          </span>
+          <span className="text-sm font-medium tabular-nums text-teal">
+            −{formatUsd(discount)}
+          </span>
+        </div>
+      )}
       <div className="mt-4 flex items-baseline justify-between border-t border-white/15 pt-4">
-        <span className="text-sm text-cream/70">Total rentals</span>
+        <span className="text-sm text-cream/70">
+          {discount > 0 ? "Subtotal" : "Total rentals"}
+        </span>
         <span
           key={monthly}
           className="animate-pop text-2xl font-bold tabular-nums text-white"
         >
-          {formatUsd(monthly * term)}
+          {formatUsd(discount > 0 ? subtotal : total)}
         </span>
       </div>
+      {discount > 0 && (
+        <div className="mt-3 flex items-baseline justify-between gap-4">
+          <span className="text-sm text-cream/70">Total rentals</span>
+          <span
+            key={total}
+            className="animate-pop text-2xl font-bold tabular-nums text-white"
+          >
+            {formatUsd(total)}
+          </span>
+        </div>
+      )}
 
       {!rentable && (
         <p
