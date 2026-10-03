@@ -60,7 +60,16 @@ export function Configurator() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <div className="lg:sticky lg:top-6 lg:self-start">
-          <WorkspaceScene workspace={state.workspace} />
+          <WorkspaceScene
+            workspace={state.workspace}
+            onSelectDesk={selectDesk}
+            onSelectChair={selectChair}
+            onAddMonitor={addMonitor}
+            onToggleLamp={toggleLamp}
+            onTogglePlant={togglePlant}
+            onToggleBeanBag={toggleBeanBag}
+            onToggleCoffeeStation={toggleCoffeeStation}
+          />
         </div>
 
         <div className="flex flex-col gap-6">

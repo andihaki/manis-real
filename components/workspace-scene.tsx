@@ -1,9 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useState } from "react";
-import type { Workspace } from "@/lib/types";
+import dynamic from "next/dynamic";
+import type { Product, Workspace } from "@/lib/types";
 import { Workspace2D } from "./workspace-2d";
+import { products } from "@/lib/products";
 
 /**
  * Three.js needs the browser, so the scene is loaded client-side only, and only
@@ -31,7 +32,25 @@ const VIEWS: ReadonlyArray<{ value: ViewMode; label: string }> = [
   { value: "3d", label: "3D" },
 ];
 
-export function WorkspaceScene({ workspace }: { workspace: Workspace }) {
+export function WorkspaceScene({
+  workspace,
+  onSelectDesk,
+  onSelectChair,
+  onAddMonitor,
+  onToggleLamp,
+  onTogglePlant,
+  onToggleBeanBag,
+  onToggleCoffeeStation,
+}: {
+  workspace: Workspace;
+  onSelectDesk: (product: Product) => void;
+  onSelectChair: (product: Product) => void;
+  onAddMonitor: () => void;
+  onToggleLamp: () => void;
+  onTogglePlant: () => void;
+  onToggleBeanBag: () => void;
+  onToggleCoffeeStation: () => void;
+}) {
   const [view, setView] = useState<ViewMode>("2d");
 
   const isEmpty =
@@ -43,8 +62,59 @@ export function WorkspaceScene({ workspace }: { workspace: Workspace }) {
     !workspace.beanBag &&
     !workspace.coffeeStation;
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData("text/plain");
+    if (!data) return;
+
+    try {
+      const { productId, productCategory } = JSON.parse(data);
+
+      // Find the product in the products array
+      const product = products.find((p: Product) => p.id === productId);
+
+      if (!product) return;
+
+      // Call the appropriate callback based on category
+      switch (productCategory) {
+        case "desk":
+          onSelectDesk(product);
+          break;
+        case "chair":
+          onSelectChair(product);
+          break;
+        case "monitor":
+          onAddMonitor();
+          break;
+        case "lamp":
+          onToggleLamp();
+          break;
+        case "plant":
+          onTogglePlant();
+          break;
+        case "bean-bag":
+          onToggleBeanBag();
+          break;
+        case "coffee-station":
+          onToggleCoffeeStation();
+          break;
+      }
+    } catch (error) {
+      console.error("Error parsing drop data:", error);
+    }
+  };
+
   return (
-    <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-linear-to-b from-[#FCF5EA] to-[#F0E1CE] ring-1 ring-black/5 shadow-sm">
+    <div
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      className="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-linear-to-b from-[#FCF5EA] to-[#F0E1CE] ring-1 ring-black/5 shadow-sm"
+    >
       {view === "2d" ? (
         <Workspace2D workspace={workspace} />
       ) : (

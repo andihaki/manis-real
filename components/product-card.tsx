@@ -13,11 +13,27 @@ export function ProductCard({
   selected: boolean;
   onSelect: (product: Product) => void;
 }) {
+  const handleClick = () => {
+    onSelect(product);
+  };
+
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify({
+      productId: product.id,
+      productCategory: product.category,
+    }));
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
   return (
     <button
       type="button"
-      onClick={() => onSelect(product)}
+      onClick={handleClick}
+      onDragStart={handleDragStart}
+      draggable
       aria-pressed={selected}
+      data-product-id={product.id}
+      data-product-category={product.category}
       className={`group flex flex-col rounded-2xl border p-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal ${
         selected
           ? "border-teal bg-teal/5 ring-2 ring-teal"

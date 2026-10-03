@@ -26,11 +26,27 @@ function ToggleCard({
   active: boolean;
   onToggle: () => void;
 }) {
+  const handleClick = () => {
+    onToggle();
+  };
+
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify({
+      productId: product.id,
+      productCategory: product.category,
+    }));
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
   return (
     <button
       type="button"
-      onClick={onToggle}
+      onClick={handleClick}
+      onDragStart={handleDragStart}
+      draggable
       aria-pressed={active}
+      data-product-id={product.id}
+      data-product-category={product.category}
       className={`flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal ${
         active
           ? "border-teal bg-teal/5 ring-2 ring-teal"
@@ -70,8 +86,20 @@ function MonitorControl({
   onAdd: () => void;
   onRemove: () => void;
 }) {
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify({
+      productId: product.id,
+      productCategory: product.category,
+    }));
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
   return (
     <div
+      draggable
+      onDragStart={handleDragStart}
+      data-product-id={product.id}
+      data-product-category={product.category}
       className={`flex items-center gap-3 rounded-2xl border p-3 transition ${
         count > 0
           ? "border-teal bg-teal/5 ring-2 ring-teal"
